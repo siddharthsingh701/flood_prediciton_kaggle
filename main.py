@@ -14,4 +14,4 @@ if __name__=='__main__':
     md_xgb = models.run_experiment('xgb',Experiment_Desc,X_train,X_test,y_train,y_test,valid_X_scaled)
     # md_catboost =models.run_experiment('catboost',Experiment_Desc,X_train,X_test,y_train,y_test,valid_X_scaled)
 
-    models.get_submission_csv(md_xgb,raw_valid)
+    models.get_submission_csv(md_xgb,valid_X_scaled,raw_valid)
