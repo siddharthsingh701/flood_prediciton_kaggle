@@ -1,16 +1,47 @@
 import features as features
-def process_data(train_data,func_num,initial_features):
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split, GridSearchCV
+import pandas as pd
+import config as config
+
+def load_data():
+    raw_train = pd.read_csv('/teamspace/studios/this_studio/2024/07/flood_prediction_notebook/data/train.csv')
+    raw_valid= pd.read_csv('/teamspace/studios/this_studio/2024/07/flood_prediction_notebook/data/train.csv')
+    return raw_train,raw_valid
+
+def process_data(train_data,func_num):
     fun_dict = {
         1: features.create_features_1,
         2: features.create_features_2,
         3: features.create_features_3,
         4: features.create_features_4,
         5: features.create_features_5,
-        6: features.create_features_6
+        6: features.create_features_6,
+        7: features.create_features_7
     }
     feature_func = fun_dict.get(func_num)
     df = train_data.copy()
-    df = feature_func(df,initial_features)
+    df = feature_func(df)
     # Drop Columns
     # df.drop(columns=DROP_COLUMNS,axis=1,inplace=True)
     return df
+
+def get_splits(raw_train,raw_valid,feature_func):
+
+    # Train Test Split and Scaling
+    raw_train_X = raw_train.drop('FloodProbability',axis=1)
+    raw_train_y = raw_train['FloodProbability']
+
+    train_X = process_data(raw_train_X,feature_func)
+    train_y = raw_train_y
+
+    sc = MinMaxScaler()
+    train_X_scaled = sc.fit_transform(train_X)
+    train_X_scaled = pd.DataFrame(train_X_scaled,columns=train_X.columns)
+
+    X_train, X_test, y_train, y_test = train_test_split(train_X_scaled, train_y, test_size=config.TEST_SIZE, random_state=config.RANDOM_STATE)
+
+    valid_X = process_data(raw_valid,feature_func)
+    valid_X_scaled = sc.transform(valid_X)
+    valid_X_scaled = pd.DataFrame(valid_X_scaled,columns=valid_X.columns)
+    return X_train, X_test, y_train, y_test,valid_X,valid_X_scaled

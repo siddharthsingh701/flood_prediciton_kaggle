@@ -32,7 +32,7 @@ import imp
 import features as features
 import config as config
 
-def evaluate_model(model_name):
+def evaluate_model(model_name,X_train,X_test,y_train,y_test):
     # Linear Regression Model
     if model_name=='linear_regression':
         model =  GridSearchCV(
@@ -170,12 +170,12 @@ def evaluate_model(model_name):
     # Return
     return model_name,score,model.best_estimator_,model.best_params_
 
-def run_experiment(model_name,exp_desc):
+def run_experiment(model_name,exp_desc,X_train,X_test,y_train,y_test,valid_X_scaled):
     mlflow.set_tracking_uri('http://127.0.0.1:5000')
     mlflow.set_experiment(model_name)
     with mlflow.start_run():
         print('Model Name : ',model_name)
-        model_name,score,best_model,best_param = evaluate_model(model_name)
+        model_name,score,best_model,best_param = evaluate_model(model_name,X_train,X_test,y_train,y_test)
         mlflow.log_param('drop_columns', config.DROP_COLUMNS)
         mlflow.log_param('model_name',model_name)
         mlflow.log_param('desc',exp_desc)
@@ -188,8 +188,8 @@ def run_experiment(model_name,exp_desc):
         # mlflow.log_artifact('transformed_data.csv')
     return best_model
 
-def get_submission_csv(model):
-    predictions = model.predict(valid_X_scaled)
+def get_submission_csv(model,data,raw_valid):
+    predictions = model.predict(data)
     sub_df = raw_valid[['id']]
     sub_df['FloodProbability'] = predictions
-    sub_df.to_csv('../data/submission.csv',index=False)
+    sub_df.to_csv('/teamspace/studios/this_studio/2024/07/flood_prediction_notebook/data/submission.csv',index=False)
