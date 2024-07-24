@@ -185,6 +185,7 @@ def run_experiment(model_name,exp_desc,X_train,X_test,y_train,y_test,valid_X_sca
         mlflow.log_param('features', str(list(valid_X_scaled.columns)))
         mlflow.log_metric('r2',score)
         mlflow.sklearn.log_model(best_model,model_name)
+        print('Test Score : ', score)
         # mlflow.log_artifact('transformed_data.csv')
     return best_model
 

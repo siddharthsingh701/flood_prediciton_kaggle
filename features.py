@@ -360,6 +360,65 @@ def create_features_6(data):
     return df 
 
 def create_features_7(data):
+    pass
+
+def create_features_8(data):
+    df = data.copy()
+
+    df['fsum'] = df[config.INITIAL_FEATURES].sum(axis=1) # for tree models
+    df['fsum_sum_twice'] = 2* df['fsum']
+
+
+    df['special1'] = df['fsum'].isin(np.arange(72, 76)) # for linear models
+    df['special1'] = np.where(df['special1']==True,1,0)
+
+    log_features = [f"log_{col}" for col in config.INITIAL_FEATURES]
+    log2_features = [f"log2_{col}" for col in config.INITIAL_FEATURES]
+
+    exp_features = [f"exp_{col}" for col in config.INITIAL_FEATURES]
+    exp2_features = [f"exp2_{col}" for col in config.INITIAL_FEATURES]
+    exp3_features = [f"exp3_{col}" for col in config.INITIAL_FEATURES]
+    exp4_features = [f"exp4_{col}" for col in config.INITIAL_FEATURES]
+    new_cols = []
+
+    df['fsum2'] = df[config.INITIAL_FEATURES].product(axis=1)
+    df['zero_count'] = (df[config.INITIAL_FEATURES] < 10).sum(axis=1)
+    df['one_count'] = (df[config.INITIAL_FEATURES] > 10).sum(axis=1)
+    
+    df['special2'] = df['fsum2'].isin(np.arange(72, 76)) 
+    df['special2'] = np.where(df['special2']==True,1,0)
+    for col in config.INITIAL_FEATURES:
+        df[f"log_{col}"] = np.log1p(df[col]+1e-4)  
+    df['log_sum'] = df[log_features].sum(axis=1)
+
+    for col in config.INITIAL_FEATURES:
+        df[f"log2_{col}"] = np.log2(df[col]+1e-4)  
+    df['log2_sum'] = df[log2_features].sum(axis=1)
+
+    for col in config.INITIAL_FEATURES:
+        df[f"exp_{col}"] = 1.2**(df[col])
+
+    df['exp_sum'] = df[exp_features].sum(axis=1)
+    df['exp_prod'] = df[exp_features].product(axis=1)
+
+    for col in config.INITIAL_FEATURES:
+        df[f"exp2_{col}"] = np.exp(df[col])
+    df['exp2_sum'] = df[exp2_features].sum(axis=1)
+
+
+    for col in config.INITIAL_FEATURES:
+        df[f"exp3_{col}"] = 4**(df[col])
+    df['exp3_sum'] = df[exp3_features].sum(axis=1)
+
+    for col in config.INITIAL_FEATURES:
+        df[f"exp4_{col}"] = 6**(df[col])
+    df['exp4_sum'] = df[exp4_features].sum(axis=1)
+
+    feats = list(config.INITIAL_FEATURES)+['fsum','fsum_sum_twice','fsum2','exp_sum','log_sum','exp2_sum','exp3_sum']
+    df = df[feats]
+    return df
+
+def create_features_9(data):
     df = data.copy()
 
     df['fsum'] = df[config.INITIAL_FEATURES].sum(axis=1) # for tree models
@@ -408,6 +467,13 @@ def create_features_7(data):
         df[f"exp4_{col}"] = 6**(df[col])
     df['exp4_sum'] = df[exp4_features].sum(axis=1)
 
-    feats = list(config.INITIAL_FEATURES)+['fsum','fsum2','exp_sum','log_sum','exp2_sum','exp3_sum']
+    df['fsum_f1'] = df['fsum']+ df['exp_sum']
+    df['fsum_f2'] = df['fsum']+ df['log_sum']
+    df['fsum_f3'] = df['fsum']+ df['exp2_sum']
+    df['fsum_f4'] = df['fsum']+ df['exp3_sum']
+    df['fsum_f5'] = df['fsum']+ df['exp_sum'] + df['log2_sum'] + df['log_sum'] + df['exp2_sum']
+    df['fsum_f6'] = df['fsum'] + df['AgriculturalPractices'] + df['CoastalVulnerability']
+
+    feats = list(config.INITIAL_FEATURES)+['fsum_f6','fsum_f5','fsum_f4','fsum_f3','fsum_f2','fsum_f1','fsum','fsum2','exp_sum','log_sum','exp2_sum','exp3_sum']
     df = df[feats]
     return df

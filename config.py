@@ -1,7 +1,7 @@
 TEST_SIZE = 0.2
 DROP_COLUMNS = ['id']
 CV = 5
-RANDOM_STATE = 42
+RANDOM_STATE = 10
 ORIGINAL_COLS = ['id','MonsoonIntensity', 'TopographyDrainage', 'RiverManagement',
        'Deforestation', 'Urbanization', 'ClimateChange', 'DamsQuality',
        'Siltation', 'AgriculturalPractices', 'Encroachments',
@@ -21,7 +21,10 @@ INITIAL_FEATURES = ['MonsoonIntensity', 'TopographyDrainage', 'RiverManagement',
 # GridSearchCV Params
 PARAMS_LINEAR_REGRESSION = {}
 
-PARAMS_XGB = {}
+PARAMS_XGB = {
+    'max_depth':[3,5,7],
+    'booster':['gbtree','gblinear','dart'],
+}
 
 PARAMS_RANDOM_FOREST_REGRESSION = {
     'n_estimators':[100,200], 
