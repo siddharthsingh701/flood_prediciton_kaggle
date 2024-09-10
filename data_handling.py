@@ -6,8 +6,8 @@ import config as config
 from sklearn.decomposition import PCA
 
 def load_data():
-    raw_train = pd.read_csv('/teamspace/studios/this_studio/2024/07/flood_prediction_notebook/data/train.csv')
-    raw_valid= pd.read_csv('/teamspace/studios/this_studio/2024/07/flood_prediction_notebook/data/train.csv')
+    raw_train = pd.read_csv('../../data/train.csv')
+    raw_valid= pd.read_csv('../../data/train.csv')
     return raw_train,raw_valid
 
 def process_data(train_data,func_num):
